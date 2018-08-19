@@ -46,32 +46,70 @@ namespace Graph
                     points.Add(l.Target.ToString());
                                      
                 }
-
+                #region desativado
                 int indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Source.ToString()));
                 if (indexNode >= 0)
                 {
-                    nodes[indexNode].Conexoes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
+                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
+                    //{
+                    //    nodes[indexNode].Conexoes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
+                    //}
                 }
                 else
+                {
                     nodes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
 
+                    //indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Source.ToString()));
+                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
+                    //{
+                    //    nodes[indexNode].Conexoes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
+                    //}
+
+
+                }
 
 
                 indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Target.ToString()));
                 if (indexNode >= 0)
                 {
-                    if(nodes[indexNode].Conexoes.FirstOrDefault(p=>p.ToString().Equals(l.Target))==null)
-                    {
-                        nodes[indexNode].Conexoes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
-                    }
-                   
+                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
+                    //{
+                    //    nodes[indexNode].Conexoes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
+                    //}
+
 
                 }
                 else
+                {
                     nodes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
+
+                    //indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Target.ToString()));
+                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
+                    //{
+                    //    nodes[indexNode].Conexoes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
+                    //}
+
+                }
+                #endregion
+
+            }
+            foreach(Node node in nodes)
+            {
+                List<ILink<T>> listaLinks = links.Where(p => p.Target.Equals(node.ToString()) || p.Source.Equals(node.ToString())).ToList();
+                foreach(ILink<T> l in listaLinks)
+                {
+                    if (node.Conexoes.FindIndex(p => p.ToString().Equals(l.Source)) < 0 && !l.Source.Equals(node.ToString()))
+                        node.Conexoes.Add(new Node(l.Source.ToString()));
+
+                    if (node.Conexoes.FindIndex(p => p.ToString().Equals(l.Target)) < 0 && !l.Target.Equals(node.ToString()))
+                        node.Conexoes.Add(new Node(l.Target.ToString()));
+
+
+                }
 
 
             }
+
 
 
             string teste = "";
