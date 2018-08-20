@@ -46,7 +46,7 @@ namespace Graph
                     points.Add(l.Target.ToString());
                                      
                 }
-                #region desativado
+               
 
                 int indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Source.ToString()));
                 if (indexNode < 0)
@@ -55,10 +55,8 @@ namespace Graph
                 indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Target.ToString()));
                 if (indexNode < 0)
                    nodes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
-                                     
-
-                
-                #endregion
+                                           
+               
 
             }
 
@@ -78,7 +76,20 @@ namespace Graph
                 }
                 
             }
+                     
             //Cria as rotas
+            
+            for(int i=0;i<=points.Count;i++)
+            {
+                List<string> list = getCaminho(source.ToString(), target.ToString(), i, nodes);
+                if (list.Count > 0)
+                    routesBetween.Add(list);
+                
+            }
+
+
+
+
 
             routesBetween = getCaminhos(source.ToString(), target.ToString(), nodes);
 
@@ -126,6 +137,39 @@ namespace Graph
 
             return rotas;
 
+        }
+        private List<string> getCaminho(string point, string target, int rota, List<Node> nodes)
+        {
+            try
+            {
+                bool repeat = false;
+                bool found = false;
+                List<string> lista = new List<string>();
+
+                while (!repeat && !found)
+                {
+                    Node node = nodes.ToList().FirstOrDefault(p => p.ToString().Equals(point));
+                    Node n = node.Conexoes[rota];
+
+                    Node nextNode;
+                    if (lista.Count == 0)
+                        nextNode = nodes.FirstOrDefault(p => p.ToString().Equals(n.ToString()));
+                    else
+                        nextNode = nodes.FirstOrDefault(p => p.ToString().Equals(lista[lista.Count - 1]));
+
+                    lista.Add(nextNode.Conexoes[rota].ToString());
+
+                    if (nextNode.Conexoes[rota].ToString().Equals(point)) repeat = true;
+                    if (nextNode.Conexoes[rota].ToString().Equals(target)) found = true;
+
+
+                }
+                return lista;
+            }
+            catch
+            {
+                return new List<string>();
+            }
         }
         protected List<string> getNodes(List<string> points)
         {
