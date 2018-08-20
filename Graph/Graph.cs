@@ -28,7 +28,7 @@ namespace Graph
             
             List<Node> nodes = new List<Node>();
             List<string> points = new List<string>();
-            List<string> routesBetween = new List<string>();
+            List<List<string>> routesBetween = new List<List<string>>();
 
             List<T> rotas = new List<T>();
          
@@ -47,52 +47,22 @@ namespace Graph
                                      
                 }
                 #region desativado
+
                 int indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Source.ToString()));
-                if (indexNode >= 0)
-                {
-                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
-                    //{
-                    //    nodes[indexNode].Conexoes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
-                    //}
-                }
-                else
-                {
+                if (indexNode < 0)
                     nodes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
-
-                    //indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Source.ToString()));
-                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
-                    //{
-                    //    nodes[indexNode].Conexoes.Add(new Node(l.Source.ToString(), l.Target.ToString()));
-                    //}
-
-
-                }
-
-
+                                
                 indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Target.ToString()));
-                if (indexNode >= 0)
-                {
-                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
-                    //{
-                    //    nodes[indexNode].Conexoes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
-                    //}
+                if (indexNode < 0)
+                   nodes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
+                                     
 
-
-                }
-                else
-                {
-                    nodes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
-
-                    //indexNode = nodes.FindIndex(p => p.ToString().Equals(l.Target.ToString()));
-                    //if (nodes[indexNode].Conexoes.FirstOrDefault(p => p.ToString().Equals(l.Target)) == null)
-                    //{
-                    //    nodes[indexNode].Conexoes.Add(new Node(l.Target.ToString(), l.Source.ToString()));
-                    //}
-
-                }
+                
                 #endregion
 
             }
+
+            //Cria as conexões
             foreach(Node node in nodes)
             {
                 List<ILink<T>> listaLinks = links.Where(p => p.Target.Equals(node.ToString()) || p.Source.Equals(node.ToString())).ToList();
@@ -106,13 +76,16 @@ namespace Graph
 
 
                 }
-
-
+                
             }
+            //Cria as rotas
+
+            routesBetween = getCaminhos(source.ToString(), target.ToString(), nodes);
 
 
+            string str = "";
 
-            string teste = "";
+        
 
             //caminho = getCaminhos(source.ToString(), target.ToString());
 
@@ -122,24 +95,36 @@ namespace Graph
 
 
         }
-        protected List<string> getCaminhos(string source, string target, List<string> nodes)
+        protected List<List<string>> getCaminhos(string source, string target, List<Node> nodes)
         {
-            foreach(string node in nodes)
+            List<List<string>> paths = new List<List<string>>();
+            List<List<string>> rotas = new List<List<string>>();
+            Node node = nodes.Where(p => p.ToString().Equals(source)).ToList()[0];
+            if (node != null)
             {
-                if(node.StartsWith(source))
+                foreach (Node conexao in node.Conexoes)
                 {
+                    paths.Add(new List<string>());
+                    paths[node.Conexoes.IndexOf(conexao)].Add(conexao.ToString());
+
+                    Node n1 = nodes.First(p => p.ToString().Equals(conexao.ToString()));
                     
-
+                    foreach (Node n in n1.Conexoes)
+                    {
+                        paths[node.Conexoes.IndexOf(conexao)].Add(n.ToString());
+                    }
+                    foreach(List<string> path in paths)
+                    {
+                        if (path.Contains(target))
+                        {
+                            rotas.Add(path);
+                        }
+                    }
                 }
-                else if(node.EndsWith(target))
-                {
-
-                }
-
-                
 
             }
-            return null;
+
+            return rotas;
 
         }
         protected List<string> getNodes(List<string> points)
