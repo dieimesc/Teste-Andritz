@@ -67,10 +67,10 @@ namespace Graph
                 foreach(ILink<T> l in listaLinks)
                 {
                     if (node.Conexoes.FindIndex(p => p.ToString().Equals(l.Source)) < 0 && !l.Source.Equals(node.ToString()))
-                        node.Conexoes.Add(new Node(l.Source.ToString()));
+                        node.Conexoes.Add(nodes.Find(p=>p.ToString().Equals(l.Source.ToString())));
 
                     if (node.Conexoes.FindIndex(p => p.ToString().Equals(l.Target)) < 0 && !l.Target.Equals(node.ToString()))
-                        node.Conexoes.Add(new Node(l.Target.ToString()));
+                        node.Conexoes.Add(nodes.Find(p => p.ToString().Equals(l.Target.ToString())));
 
 
                 }
@@ -108,6 +108,7 @@ namespace Graph
         }
         protected List<List<string>> getCaminhos(string source, string target, List<Node> nodes)
         {
+            //List<string> path = new List<string>();
             List<List<string>> paths = new List<List<string>>();
             List<List<string>> rotas = new List<List<string>>();
             Node node = nodes.Where(p => p.ToString().Equals(source)).ToList()[0];
@@ -122,13 +123,27 @@ namespace Graph
                     
                     foreach (Node n in n1.Conexoes)
                     {
-                        paths[node.Conexoes.IndexOf(conexao)].Add(n.ToString());
+                        if(!n.ToString().Equals(source))
+                            paths[node.Conexoes.IndexOf(conexao)].Add(n.ToString());
                     }
-                    foreach(List<string> path in paths)
+                    for (int i = 0; i < paths.Count; i++)
                     {
-                        if (path.Contains(target))
+                        foreach (List<string> path in paths)
                         {
-                            rotas.Add(path);
+                            Node n2 = nodes.First(p => p.ToString().Equals(path[i]));
+                            foreach (Node n in n2.Conexoes)
+                            {
+                                if (!n2.ToString().Equals(source))
+                                    paths[node.Conexoes.IndexOf(conexao)].Add(n.ToString());
+                            }
+
+                            //Here continue
+
+
+                            //if (path.Contains(target))
+                            //{
+                            //    rotas.Add(path);
+                            //}
                         }
                     }
                 }
