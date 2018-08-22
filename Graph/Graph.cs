@@ -116,15 +116,25 @@ namespace Graph
             {
                 foreach (Node conexao in node.Conexoes)
                 {
-                    paths.Add(new List<string>());
-                    paths[node.Conexoes.IndexOf(conexao)].Add(conexao.ToString());
+                    if (/*conexao.Conexoes.FirstOrDefault(p => p.Conexoes.ToString().Equals(source.ToString())) != null
+                        && */
+                       paths.Count>0 && 
+                       paths[paths.Count-1].Contains(target))
+                    {
+                        rotas.Add(paths[paths.Count - 1]);
+                        paths.Add(new List<string>());
+
+                    }
+                    if (paths.Count==0) paths.Add(new List<string>());
+                    paths[paths.Count-1].Add(conexao.ToString());
+                
 
                     Node n1 = nodes.First(p => p.ToString().Equals(conexao.ToString()));
                     
                     foreach (Node n in n1.Conexoes)
                     {
-                        if(!n.ToString().Equals(source))
-                            paths[node.Conexoes.IndexOf(conexao)].Add(n.ToString());
+                        if(!n.ToString().Equals(source) && !paths[paths.Count-1].Contains(n.ToString()))
+                            paths[paths.Count-1].Add(n.ToString());
                     }
                     for (int i = 0; i < paths.Count; i++)
                     {
@@ -133,17 +143,11 @@ namespace Graph
                             Node n2 = nodes.First(p => p.ToString().Equals(path[i]));
                             foreach (Node n in n2.Conexoes)
                             {
-                                if (!n2.ToString().Equals(source))
-                                    paths[node.Conexoes.IndexOf(conexao)].Add(n.ToString());
+                                if (!n2.ToString().Equals(source) && !n.ToString().Equals(source) && !path.Contains(n.ToString())
+                                    && n.Conexoes.Contains(nodes.First(p=>p.ToString().Equals(source))))
+                                    paths[path.Count-1].Add(n.ToString());
                             }
-
-                            //Here continue
-
-
-                            //if (path.Contains(target))
-                            //{
-                            //    rotas.Add(path);
-                            //}
+                           
                         }
                     }
                 }
