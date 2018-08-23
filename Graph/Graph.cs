@@ -93,17 +93,15 @@ namespace Graph
 
             routesBetween = getCaminhos(source.ToString(), target.ToString(), nodes);
 
+            List<string> newList = new List<string>();
+            
+            foreach(List<string> l in routesBetween)
+            {
+                newList.Add("a-" + string.Join("-",l.ToArray()));
+            }
 
-            string str = "";
 
-        
-
-            //caminho = getCaminhos(source.ToString(), target.ToString());
-
-
-
-            return (IEnumerable<T>)nodes.AsEnumerable();
-
+            return newList.Cast<T>().AsEnumerable<T>();
 
         }
         protected List<List<string>> getCaminhos(string source, string target, List<Node> nodes)
@@ -144,12 +142,19 @@ namespace Graph
                             foreach (Node n in n2.Conexoes)
                             {
                                 if (!n2.ToString().Equals(source) && !n.ToString().Equals(source) && !path.Contains(n.ToString())
-                                    && n.Conexoes.Contains(nodes.First(p=>p.ToString().Equals(source))))
-                                    paths[path.Count-1].Add(n.ToString());
+                                    || (n.Conexoes.Contains(nodes.First(p=>p.ToString().Equals(target))) && !inOtherList(n.ToString(),paths,target)))
+                                         paths[path.Count-1].Add(n.ToString());
+
+                                if (n.Conexoes.Contains(nodes.First(p => p.ToString().Equals(target))) && !inOtherList(n.ToString(), paths, target))
+                                {
+                                    paths[paths.Count - 1].Add(target);
+                                    rotas.Add(paths[paths.Count - 1]);
+                                    break;
+                                }
                             }
-                           
-                        }
-                    }
+                       }
+                     }
+                   
                 }
 
             }
@@ -157,6 +162,16 @@ namespace Graph
             return rotas;
 
         }
+        private bool inOtherList(string n, List<List<string>> paths, string target)
+        {
+            foreach(List<string> path in paths)
+            {
+                if (paths.IndexOf(path) == paths.Count - 1) break;
+                if (path.Contains(n) && !n.ToString().Equals(target)) return true;
+            }
+            return false;
+        }
+
         private List<string> getCaminho(string point, string target, int rota, List<Node> nodes)
         {
             try

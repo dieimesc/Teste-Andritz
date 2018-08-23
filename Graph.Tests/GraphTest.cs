@@ -29,7 +29,7 @@ namespace Graph.Tests
             var graph = new Graph<string>(links);
             var paths = graph.RoutesBetween("a", "e");
 
-            var list = paths.ToArray();
+            var list = paths.AsEnumerable().ToArray();
             Assert.AreEqual(list.Length, 2);
 
             Assert.IsTrue(list.Any(l => String.Join("-", l) == "a-b-c-d-e"));
