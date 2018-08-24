@@ -78,26 +78,13 @@ namespace Graph
             }
                      
             //Cria as rotas
-            
-            for(int i=0;i<=points.Count;i++)
-            {
-                List<string> list = getCaminho(source.ToString(), target.ToString(), i, nodes);
-                if (list.Count > 0)
-                    routesBetween.Add(list);
-                
-            }
-
-
-
-
-
-            routesBetween = getCaminhos(source.ToString(), target.ToString(), nodes);
+             routesBetween = getCaminhos(source.ToString(), target.ToString(), nodes);
 
             List<string> newList = new List<string>();
             
             foreach(List<string> l in routesBetween)
             {
-                newList.Add("a-" + string.Join("-",l.ToArray()));
+                newList.Add(source +  "-" + string.Join("-",l.ToArray()));
             }
 
 
