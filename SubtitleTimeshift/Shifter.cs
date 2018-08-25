@@ -1,27 +1,76 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SubtitleTimeshift
 {
-     public class Shifter
+    public class Shifter
     {
         async static public Task Shift(Stream input, Stream output, TimeSpan timeSpan, Encoding encoding, int bufferSize = 1024, bool leaveOpen = false)
         {
-            StreamReader sr = new StreamReader(input, encoding);
-            StreamWriter sw = new StreamWriter(output, encoding);
-            int count = 0;
-            while (!sr.EndOfStream)
+            try
             {
-                string line = sr.ReadLine();
-
-                if (int.TryParse(line.Substring(0, line.Length), out count))
+                StreamReader sr = new StreamReader(input, encoding);
+                StreamWriter sw = new StreamWriter(output, encoding);
+                                
+                int count = 0;
+                while (!sr.EndOfStream)
                 {
-                    sw.WriteLine(count.ToString());
-                    sw.WriteLine(TimeSpan.FromMilliseconds(Convert.ToDouble(sr.ReadLine())) + timeSpan);
+                    string line = sr.ReadLine();
+
+                    if (int.TryParse(line.Substring(0, line.Length), out count))
+                    {
+                        sw.WriteLine(count.ToString());count++;continue;
+
+
+                    }
+                    else if (line.IndexOf(":") == 2)
+                    {
+
+                     
+                        TimeSpan timeOriginalInicio = TimeSpan.Parse(line.Substring(0, line.Length - line.IndexOf("-->") - 3).Trim().Replace(",", "."));
+                        TimeSpan timeOriginalFinal = TimeSpan.Parse(line.Substring(0, line.Length - line.IndexOf("-->") - 3).Trim().Replace(",", "."));
+
+                        timeOriginalInicio.Add(timeSpan);
+                        timeOriginalFinal.Add(timeSpan);
+
+                        string lineToOutput=timeOriginalInicio.ToString(@"hh\:mm\:ss\.fff") + " --> " + timeOriginalFinal.ToString(@"hh\:mm\:ss\.fff");
+
+                        sw.WriteLine(lineToOutput);
+
+                    }
+                    else
+                        sw.WriteLine(line);
+
+                        
+                    
+                   
                 }
+                sw.Flush();
+                StreamReader sre = new StreamReader(sw.BaseStream);
+                output = GenerateStreamFromString(sre.ReadToEnd());
+            
+                
             }
+            
+            catch (Exception e)
+            { 
+                
+
+
+            }
+
+
+        }
+        public static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }
