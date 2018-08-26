@@ -30,20 +30,20 @@ namespace SubtitleTimeshift
 
                      
                         TimeSpan timeOriginalInicio = TimeSpan.Parse(line.Substring(0, line.Length - line.IndexOf("-->") - 3).Trim().Replace(",", "."));
-                        TimeSpan timeOriginalFinal = TimeSpan.Parse(line.Substring(0, line.Length - line.IndexOf("-->") - 3).Trim().Replace(",", "."));
+                        TimeSpan timeOriginalFinal = TimeSpan.Parse(line.Substring(line.IndexOf("-->") + 3, line.Length - line.IndexOf("-->") - 3)
+                            .Trim().Replace(",", "."));
 
-                        timeOriginalInicio.Add(timeSpan);
-                        timeOriginalFinal.Add(timeSpan);
+                       TimeSpan timeSpanTargetInicio =   timeOriginalInicio.Add(timeSpan);
+                       TimeSpan timeSpanTargetFim =  timeOriginalFinal.Add(timeSpan);
 
-                        string lineToOutput=timeOriginalInicio.ToString(@"hh\:mm\:ss\.fff") + " --> " + timeOriginalFinal.ToString(@"hh\:mm\:ss\.fff");
+                        string lineToOutput=timeSpanTargetInicio.ToString(@"hh\:mm\:ss\.fff") + " --> " + timeSpanTargetFim.ToString(@"hh\:mm\:ss\.fff");
 
                         sw.WriteLine(lineToOutput);
 
                     }
                     else
                         sw.WriteLine(line);
-
-                        
+                      
                     
                    
                 }
